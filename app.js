@@ -4,6 +4,17 @@ require('dotenv/config');
 
 const client = new Discord.Client();
 let counter = {};
+let queue = [];
+
+async function playQueue(connection) {
+  connection.play(await ytdl(queue[0]), { type: 'opus' }).on("finish", () => {
+    console.log(queue)
+    queue = queue.filter(song => song != queue[0])
+    if (queue.length > 0) {
+      playQueue(connection);
+    }
+  });  
+}
 
 const filter = (reaction, user) => {
   return ['👍', '👎'].includes(reaction.emoji.name) && !user.bot;
@@ -56,13 +67,21 @@ client.on('message', message => {
         return;
       }
 
-      voice.channel.join().then(async (connection) => {
-        try {
-          connection.play(await ytdl(arguments[0]), { type: 'opus' });
-        } catch (ex) {
-          message.reply("Erro ao reproduzir mídia");
-        }
-      });
+      if (!queue[0]) {
+        queue.push(URL);
+        console.log(queue);
+        voice.channel.join().then((connection) => {
+          try {
+            playQueue(connection);
+          } catch (ex) {
+            message.reply("Erro ao reproduzir mídia");
+            console.error(ex);
+          }
+        });
+      } else {
+        queue.push(URL);
+        console.log(queue);
+      }
     }
 
     if (command === "leave") {
@@ -73,6 +92,23 @@ client.on('message', message => {
         return;
       }
 
+      voice.channel.leave();
+    }
+
+    if (command === "resetqueue") {
+      console.log("Resetando queue");
+      const voice = message.member.voice;
+
+      if (!voice.channelID) {
+        message.reply("É preciso estar em um canal de voz para utilizar esse comando.");
+        return;
+      }
+
+      queue.forEach(() => {
+        queue.pop();
+      })
+
+      message.reply("Queue resetada.");
       voice.channel.leave();
     }
 
