@@ -584,6 +584,10 @@ client.on('message', message => {
           value: "Para o reprodução e saí do canal de voz"
         },
         {
+          name: "!resetqueue",
+          value: "Limpa a queue de reprodução"
+        },
+        {
           name: "!roles",
           value: "Verifica e pega cargos no servidor"
         }
