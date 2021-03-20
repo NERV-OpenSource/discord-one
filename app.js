@@ -565,6 +565,31 @@ client.on('message', message => {
 
     }
 
+    if (command === "evaseries") {
+      
+      const venusRole = message.guild.roles.cache.find((role) => role.name === "N.E. #2 - Venus");
+
+      const nervEmoji = message.guild.emojis.cache.find(emoji => emoji.name === "nerv");
+
+      message.channel.send(`Iniciando ... PROTOCOLO V.E.N.U.S.\nIniciado! Reaja a essa mensagem para garantir seu acesso ao evento.`).then((message) => {
+        message.react(nervEmoji);
+
+        message.client.on('messageReactionAdd', (reaction, user) => {
+          const member = message.guild.members.cache.find((member) => member.id === user.id);
+          if (!user.bot && reaction.emoji.name === nervEmoji.name) {
+            member.roles.add(venusRole);
+          }
+        })
+
+        message.client.on('messageReactionRemove', (reaction, user) => {
+          const member = message.guild.members.cache.find((member) => member.id === user.id);
+          if (!user.bot && reaction.emoji.name === nervEmoji.name) {
+            member.roles.remove(venusRole);
+          }
+        })
+      });
+    }
+
     if (command == "help") {
 
       message.reply({embed: {
