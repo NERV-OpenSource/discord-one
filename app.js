@@ -26,7 +26,7 @@ client.once('ready', () => {
 
 client.on('message', message => {
   try {
-    const activeRole = message.guild.roles.cache.find(role => role.name = "Active");
+    const activeRole = message.guild.roles.cache.find(role => role.name = "Membro Ativo");
     if (message.author.bot) return;
 
     if (activeRole) {
